@@ -23,6 +23,14 @@ export type VisionCapabilities = {
   fallback_mode: boolean;
 };
 
+export type SystemStatus = {
+  status: string;
+  started_at: string;
+  uptime_seconds: number;
+  openai_enabled: boolean;
+  fallback_mode: boolean;
+};
+
 const API_BASE = (process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000").replace(/\/+$/, "");
 const API_V1 = API_BASE.endsWith("/api/v1") ? API_BASE : `${API_BASE}/api/v1`;
 
@@ -44,6 +52,14 @@ export async function getVisionCapabilities(): Promise<VisionCapabilities> {
     throw new Error(`Capabilities request failed: ${response.status}`);
   }
   return response.json() as Promise<VisionCapabilities>;
+}
+
+export async function getSystemStatus(): Promise<SystemStatus> {
+  const response = await fetch(`${API_V1}/system/status`);
+  if (!response.ok) {
+    throw new Error(`System status request failed: ${response.status}`);
+  }
+  return response.json() as Promise<SystemStatus>;
 }
 
 export async function uploadMedia(file: File, mediaType: MediaType) {

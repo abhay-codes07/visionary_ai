@@ -3,12 +3,40 @@
 import Link from "next/link";
 import { List, X } from "@phosphor-icons/react";
 import { AnimatePresence, motion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
+import { getSystemStatus } from "@/lib/ai-client";
 import { siteConfig } from "@/lib/site";
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [apiHealthy, setApiHealthy] = useState<boolean | null>(null);
+  const [aiEnabled, setAiEnabled] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    let alive = true;
+    const load = async () => {
+      try {
+        const status = await getSystemStatus();
+        if (!alive) return;
+        setApiHealthy(status.status === "ok");
+        setAiEnabled(status.openai_enabled);
+      } catch {
+        if (!alive) return;
+        setApiHealthy(false);
+      }
+    };
+
+    void load();
+    const interval = setInterval(() => {
+      void load();
+    }, 30000);
+
+    return () => {
+      alive = false;
+      clearInterval(interval);
+    };
+  }, []);
 
   return (
     <>
@@ -18,6 +46,24 @@ export function Navbar() {
             VISIONARY
           </Link>
           <div className="hidden items-center gap-8 md:flex">
+            <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.16em]">
+              <span
+                className={`rounded-full border px-2 py-1 ${
+                  apiHealthy === true
+                    ? "border-emerald-300/40 bg-emerald-300/10 text-emerald-200"
+                    : "border-rose-300/40 bg-rose-300/10 text-rose-200"
+                }`}
+              >
+                API {apiHealthy === true ? "Online" : "Offline"}
+              </span>
+              <span
+                className={`rounded-full border px-2 py-1 ${
+                  aiEnabled ? "border-cyan-300/40 bg-cyan-300/10 text-cyan-100" : "border-white/20 text-white/65"
+                }`}
+              >
+                AI {aiEnabled ? "Enabled" : "Stub"}
+              </span>
+            </div>
             {siteConfig.navigation.map((item) => (
               <a key={item.label} href={item.href} className="text-sm text-white/70 transition hover:text-white">
                 {item.label}
