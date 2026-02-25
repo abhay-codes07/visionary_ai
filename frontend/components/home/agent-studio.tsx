@@ -1,13 +1,15 @@
 "use client";
 
-import { ChangeEvent, FormEvent, useMemo, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useMemo, useState } from "react";
 
 import {
   analyzeVision,
+  getVisionCapabilities,
   MediaType,
   streamAnalyzeVision,
   streamQuestionVision,
   uploadMedia,
+  VisionCapabilities,
   VisionAnalyzeResponse,
 } from "@/lib/ai-client";
 
@@ -22,11 +24,26 @@ export function AgentStudioSection() {
   const [isRunning, setIsRunning] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [analysis, setAnalysis] = useState<VisionAnalyzeResponse | null>(null);
+  const [capabilities, setCapabilities] = useState<VisionCapabilities | null>(null);
   const [streamedText, setStreamedText] = useState("");
   const [question, setQuestion] = useState("What are the most important objects visible?");
   const [questionStream, setQuestionStream] = useState("");
 
   const canUpload = useMemo(() => mediaType !== "webcam", [mediaType]);
+
+  useEffect(() => {
+    let active = true;
+    getVisionCapabilities()
+      .then((data) => {
+        if (active) setCapabilities(data);
+      })
+      .catch(() => {
+        if (active) setCapabilities(null);
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const onFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     setSelectedFile(event.target.files?.[0] ?? null);
@@ -86,6 +103,18 @@ export function AgentStudioSection() {
 
       <div className="grid gap-5 lg:grid-cols-2">
         <form onSubmit={onSubmit} className="glass-card rounded-2xl p-6">
+          <div className="mb-4 rounded-xl border border-white/15 bg-white/[0.02] p-3">
+            <p className="text-xs uppercase tracking-[0.2em] text-white/55">Backend Status</p>
+            <p className="mt-2 text-sm text-white/80">
+              Model: <span className="text-cyan-100">{capabilities?.model ?? "Unavailable"}</span>
+            </p>
+            <p className="mt-1 text-xs text-white/65">
+              AI Enabled: {capabilities?.openai_enabled ? "Yes" : "No"} | Fallback:{" "}
+              {capabilities?.fallback_mode ? "On" : "Off"} | Streaming:{" "}
+              {capabilities?.supports_streaming ? "On" : "Off"}
+            </p>
+          </div>
+
           <label className="mb-2 block text-xs uppercase tracking-[0.22em] text-white/55">Media Type</label>
           <div className="mb-4 flex flex-wrap gap-2">
             {mediaOptions.map((option) => (

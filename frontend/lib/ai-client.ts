@@ -14,6 +14,15 @@ export type VisionAnalyzeResponse = {
   generated_at: string;
 };
 
+export type VisionCapabilities = {
+  supported_media_types: MediaType[];
+  supported_transports: string[];
+  supports_streaming: boolean;
+  model: string;
+  openai_enabled: boolean;
+  fallback_mode: boolean;
+};
+
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
 const API_V1 = `${API_BASE}/api/v1`;
 
@@ -27,6 +36,14 @@ export async function analyzeVision(payload: VisionAnalyzeRequest): Promise<Visi
     throw new Error(`Analyze request failed: ${response.status}`);
   }
   return response.json() as Promise<VisionAnalyzeResponse>;
+}
+
+export async function getVisionCapabilities(): Promise<VisionCapabilities> {
+  const response = await fetch(`${API_V1}/vision/capabilities`);
+  if (!response.ok) {
+    throw new Error(`Capabilities request failed: ${response.status}`);
+  }
+  return response.json() as Promise<VisionCapabilities>;
 }
 
 export async function uploadMedia(file: File, mediaType: MediaType) {
