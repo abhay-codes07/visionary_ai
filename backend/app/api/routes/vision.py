@@ -56,6 +56,8 @@ async def get_vision_capabilities() -> VisionCapabilitiesResponse:
         supported_transports=["rest", "websocket"],
         supports_streaming=True,
         model=settings.openai_model,
+        openai_enabled=settings.openai_enabled,
+        fallback_mode=settings.openai_fallback_to_stub,
     )
 
 

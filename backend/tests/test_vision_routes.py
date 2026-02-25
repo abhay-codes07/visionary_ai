@@ -29,6 +29,8 @@ def test_capabilities_route_returns_supported_contract() -> None:
     assert "image" in payload["supported_media_types"]
     assert "websocket" in payload["supported_transports"]
     assert isinstance(payload["model"], str) and payload["model"]
+    assert isinstance(payload["openai_enabled"], bool)
+    assert isinstance(payload["fallback_mode"], bool)
 
 
 def test_question_route_rejects_blank_question() -> None:

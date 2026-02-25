@@ -52,6 +52,8 @@ class VisionCapabilitiesResponse(BaseModel):
     supported_transports: list[str]
     supports_streaming: bool
     model: str
+    openai_enabled: bool
+    fallback_mode: bool
 
 
 class VisionStreamChunk(BaseModel):
