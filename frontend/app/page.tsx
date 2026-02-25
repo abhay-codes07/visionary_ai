@@ -1,5 +1,6 @@
 import { FeaturedSection } from "@/components/home/featured";
 import { FeaturesGridSection } from "@/components/home/features-grid";
+import { FAQSection } from "@/components/home/faq";
 import { HeroSection } from "@/components/home/hero";
 import { HowItWorksSection } from "@/components/home/how-it-works";
 import { MissionSection } from "@/components/home/mission";
@@ -18,6 +19,7 @@ export default function HomePage() {
       <MissionSection />
       <TestimonialsSection />
       <PricingSection />
+      <FAQSection />
     </main>
   );
 }
