@@ -1,6 +1,7 @@
 from datetime import datetime, UTC
 from uuid import uuid4
 
+from app.core.errors import InvalidInputError
 from app.schemas.vision import (
     VisionAnalyzeRequest,
     VisionAnalyzeResponse,
@@ -12,6 +13,9 @@ from app.schemas.vision import (
 
 class VisionService:
     async def analyze(self, payload: VisionAnalyzeRequest) -> VisionAnalyzeResponse:
+        if not payload.prompt.strip():
+            raise InvalidInputError("Prompt cannot be empty.")
+
         request_id = str(uuid4())
         detections = self._mock_detections(payload.media_type)
         summary = (
@@ -27,6 +31,9 @@ class VisionService:
         )
 
     async def answer_question(self, payload: VisionQuestionRequest) -> VisionQuestionResponse:
+        if not payload.question.strip():
+            raise InvalidInputError("Question cannot be empty.")
+
         answer = (
             f"Request {payload.request_id}: Based on the analyzed scene, "
             f"the most likely interpretation is that key entities are stable and trackable."
