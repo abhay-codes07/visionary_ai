@@ -2,7 +2,9 @@ from datetime import UTC, datetime
 from uuid import uuid4
 
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
+from pydantic import ValidationError
 
+from app.core.errors import VisionaryError
 from app.schemas.realtime import RealtimeInboundMessage, RealtimeOutboundMessage
 from app.schemas.vision import VisionAnalyzeRequest, VisionQuestionRequest
 from app.services.realtime_manager import RealtimeConnectionManager
@@ -25,8 +27,15 @@ async def realtime_gateway(websocket: WebSocket) -> None:
     try:
         while True:
             raw_message = await websocket.receive_json()
-            inbound = RealtimeInboundMessage.model_validate(raw_message)
-            await _dispatch_inbound(websocket, inbound)
+            try:
+                inbound = RealtimeInboundMessage.model_validate(raw_message)
+                await _dispatch_inbound(websocket, inbound)
+            except ValidationError as exc:
+                await _send_error(websocket, f"Invalid realtime payload: {exc.errors()[0]['msg']}", None)
+            except VisionaryError as exc:
+                await _send_error(websocket, exc.message, inbound.request_id if "inbound" in locals() else None)
+            except Exception:
+                await _send_error(websocket, "Unexpected realtime processing error.", None)
     except WebSocketDisconnect:
         manager.disconnect(websocket)
 
@@ -77,3 +86,24 @@ async def _dispatch_inbound(websocket: WebSocket, message: RealtimeInboundMessag
     token_events = await streaming_service.stream_answer(question_response.request_id, question_response.answer)
     for event in token_events:
         await manager.send_message(websocket, event)
+    await manager.send_message(
+        websocket,
+        RealtimeOutboundMessage(
+            type="completed",
+            request_id=question_response.request_id,
+            content="Question processing complete.",
+            timestamp=datetime.now(UTC),
+        ),
+    )
+
+
+async def _send_error(websocket: WebSocket, message: str, request_id: str | None) -> None:
+    await manager.send_message(
+        websocket,
+        RealtimeOutboundMessage(
+            type="error",
+            request_id=request_id,
+            content=message,
+            timestamp=datetime.now(UTC),
+        ),
+    )

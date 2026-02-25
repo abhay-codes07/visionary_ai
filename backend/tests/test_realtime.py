@@ -53,3 +53,23 @@ def test_websocket_question_flow_emits_token_answer() -> None:
         assert first["type"] == "token"
         assert first["request_id"] == "req-question"
         assert isinstance(first["content"], str) and first["content"]
+
+        last = None
+        while True:
+            message = websocket.receive_json()
+            if message["type"] == "completed":
+                last = message
+                break
+        assert last is not None
+        assert last["request_id"] == "req-question"
+
+
+def test_websocket_invalid_payload_emits_error_event() -> None:
+    client = TestClient(app)
+    with client.websocket_connect("/api/v1/ws") as websocket:
+        _ = websocket.receive_json()
+        websocket.send_json({"type": "analyze", "prompt": 42})
+
+        error = websocket.receive_json()
+        assert error["type"] == "error"
+        assert "Invalid realtime payload" in error["content"]
