@@ -8,8 +8,14 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        background: '#07090f',
-        foreground: '#f5f7ff',
+        background: 'var(--bg-0)',
+        foreground: 'var(--text-primary)',
+        glass: 'var(--glass-fill)',
+        neon: {
+          cyan: 'var(--neon-cyan)',
+          blue: 'var(--neon-blue)',
+          teal: 'var(--neon-teal)',
+        },
       },
       boxShadow: {
         glow: '0 0 60px rgba(83, 198, 255, 0.25)',
