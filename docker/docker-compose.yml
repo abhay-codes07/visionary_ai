@@ -3,18 +3,43 @@ services:
     build:
       context: ../frontend
       dockerfile: ../docker/frontend.Dockerfile
+    container_name: visionary-frontend
+    restart: unless-stopped
     ports:
       - "3000:3000"
     env_file:
       - ../frontend/.env.example
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3000 >/dev/null || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    networks:
+      - visionary-net
 
   backend:
     build:
       context: ../backend
       dockerfile: ../docker/backend.Dockerfile
+    container_name: visionary-backend
+    restart: unless-stopped
     ports:
       - "8000:8000"
     env_file:
       - ../backend/.env.example
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/api/v1/health')\""]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    networks:
+      - visionary-net
+
+networks:
+  visionary-net:
+    name: visionary-net
