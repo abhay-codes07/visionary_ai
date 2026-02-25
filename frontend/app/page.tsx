@@ -3,6 +3,7 @@ import { FeaturesGridSection } from "@/components/home/features-grid";
 import { HeroSection } from "@/components/home/hero";
 import { HowItWorksSection } from "@/components/home/how-it-works";
 import { MissionSection } from "@/components/home/mission";
+import { PricingSection } from "@/components/home/pricing";
 import { TestimonialsSection } from "@/components/home/testimonials";
 import { Navbar } from "@/components/layout/navbar";
 
@@ -16,6 +17,7 @@ export default function HomePage() {
       <HowItWorksSection />
       <MissionSection />
       <TestimonialsSection />
+      <PricingSection />
     </main>
   );
 }
