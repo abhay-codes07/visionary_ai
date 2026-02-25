@@ -1,3 +1,4 @@
+import { Navbar } from "@/components/layout/navbar";
 import { Reveal } from "@/components/ui/reveal";
 import { Section } from "@/components/ui/section";
 import { siteConfig } from "@/lib/site";
@@ -5,6 +6,7 @@ import { siteConfig } from "@/lib/site";
 export default function HomePage() {
   return (
     <main className="min-h-screen bg-background text-foreground">
+      <Navbar />
       <Section className="pt-24 sm:pt-32">
         <Reveal className="glass-card rounded-3xl p-8 sm:p-12">
           <div className="space-y-5">
