@@ -6,11 +6,13 @@ from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from app.schemas.realtime import RealtimeInboundMessage, RealtimeOutboundMessage
 from app.schemas.vision import VisionAnalyzeRequest, VisionQuestionRequest
 from app.services.realtime_manager import RealtimeConnectionManager
+from app.services.streaming_service import StreamingService
 from app.services.vision_service import VisionService
 
 router = APIRouter()
 manager = RealtimeConnectionManager()
 vision_service = VisionService()
+streaming_service = StreamingService()
 
 
 @router.websocket("/ws")
@@ -53,6 +55,9 @@ async def _dispatch_inbound(websocket: WebSocket, message: RealtimeInboundMessag
                 timestamp=datetime.now(UTC),
             ),
         )
+        token_events = await streaming_service.stream_analysis(analyze_response.request_id, analyze_response.summary)
+        for event in token_events:
+            await manager.send_message(websocket, event)
         await manager.send_message(
             websocket,
             RealtimeOutboundMessage(
@@ -69,12 +74,6 @@ async def _dispatch_inbound(websocket: WebSocket, message: RealtimeInboundMessag
         question=message.question or "What is happening in this scene?",
     )
     question_response = await vision_service.answer_question(question_payload)
-    await manager.send_message(
-        websocket,
-        RealtimeOutboundMessage(
-            type="token",
-            request_id=question_response.request_id,
-            content=question_response.answer,
-            timestamp=datetime.now(UTC),
-        ),
-    )
+    token_events = await streaming_service.stream_answer(question_response.request_id, question_response.answer)
+    for event in token_events:
+        await manager.send_message(websocket, event)

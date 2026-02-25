@@ -27,7 +27,16 @@ def test_websocket_analyze_flow_emits_analysis_and_completed() -> None:
         assert isinstance(analysis["request_id"], str) and analysis["request_id"]
         assert isinstance(analysis["content"], str) and analysis["content"]
 
-        completed = websocket.receive_json()
+        tokens = []
+        while True:
+            message = websocket.receive_json()
+            if message["type"] == "completed":
+                completed = message
+                break
+            tokens.append(message)
+
+        assert tokens
+        assert all(token["type"] == "token" for token in tokens)
         assert completed["type"] == "completed"
         assert completed["request_id"] == analysis["request_id"]
 
@@ -40,7 +49,7 @@ def test_websocket_question_flow_emits_token_answer() -> None:
             {"type": "question", "request_id": "req-question", "question": "What objects are visible?"}
         )
 
-        answer = websocket.receive_json()
-        assert answer["type"] == "token"
-        assert answer["request_id"] == "req-question"
-        assert isinstance(answer["content"], str) and "req-question" in answer["content"]
+        first = websocket.receive_json()
+        assert first["type"] == "token"
+        assert first["request_id"] == "req-question"
+        assert isinstance(first["content"], str) and first["content"]
