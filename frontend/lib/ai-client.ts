@@ -79,6 +79,46 @@ export async function streamAnalyzeVision(payload: VisionAnalyzeRequest, onToken
   }
 }
 
+export async function streamQuestionVision(
+  requestId: string,
+  question: string,
+  onToken: (token: string) => void,
+) {
+  const response = await fetch(`${API_V1}/vision/question/stream`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ request_id: requestId, question }),
+  });
+  if (!response.ok || !response.body) {
+    throw new Error(`Question stream request failed: ${response.status}`);
+  }
+
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+    const events = buffer.split("\n\n");
+    buffer = events.pop() ?? "";
+
+    for (const event of events) {
+      const line = event.split("\n").find((l) => l.startsWith("data: "));
+      if (!line) continue;
+      const data = line.slice(6).trim();
+      if (data === "[DONE]") return;
+      try {
+        const chunk = JSON.parse(data) as { token?: string };
+        if (chunk.token) onToken(chunk.token);
+      } catch {
+        // Ignore malformed chunks.
+      }
+    }
+  }
+}
+
 export function createVisionWebSocket(): WebSocket {
   const wsUrl = process.env.NEXT_PUBLIC_WS_URL ?? "ws://localhost:8000/api/v1/ws";
   return new WebSocket(wsUrl);
