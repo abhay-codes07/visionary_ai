@@ -75,9 +75,11 @@ class VisionService:
                 if not self._settings.openai_fallback_to_stub:
                     raise ServiceUnavailableError("AI provider request failed.") from exc
 
+        source_hint = f" Source: {payload.source_uri}." if payload.source_uri else ""
+        scene_profile = self._stub_scene_profile(payload.prompt)
         return (
             f"Processed {payload.media_type} input with {detections_count} detected scene elements. "
-            f"Prompt focus: {payload.prompt}"
+            f"Scene profile: {scene_profile}. Prompt focus: {payload.prompt}.{source_hint}"
         )
 
     async def _resolve_question_answer(self, payload: VisionQuestionRequest) -> str:
@@ -96,7 +98,19 @@ class VisionService:
                 if not self._settings.openai_fallback_to_stub:
                     raise ServiceUnavailableError("AI provider question request failed.") from exc
 
+        question_focus = payload.question.strip().rstrip("?")
         return (
-            f"Request {payload.request_id}: Based on the analyzed scene, "
-            f"the most likely interpretation is that key entities are stable and trackable."
+            f"Request {payload.request_id}: For '{question_focus}', "
+            f"the scene indicates trackable entities with moderate motion and high object confidence."
         )
+
+    @staticmethod
+    def _stub_scene_profile(prompt: str) -> str:
+        profiles = (
+            "indoor workspace with multiple hard edges",
+            "mixed-light environment with foreground subject emphasis",
+            "dynamic frame with moderate temporal movement",
+            "high-contrast scene with structured background elements",
+        )
+        index = abs(hash(prompt.lower())) % len(profiles)
+        return profiles[index]

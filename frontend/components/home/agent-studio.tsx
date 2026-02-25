@@ -85,7 +85,8 @@ export function AgentStudioSection() {
     setError(null);
     setQuestionStream("");
     try {
-      await streamQuestionVision("studio-question", question, (token) =>
+      const requestId = `studio-question-${Date.now()}`;
+      await streamQuestionVision(requestId, question, (token) =>
         setQuestionStream((prev) => `${prev}${prev ? " " : ""}${token}`),
       );
     } catch (caught) {

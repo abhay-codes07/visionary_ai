@@ -55,10 +55,9 @@ export function HeroSection() {
         className="glass-card rounded-3xl p-3"
       >
         <div className="relative h-[340px] overflow-hidden rounded-2xl border border-white/10 bg-black/30">
-          <iframe
-            src="https://my.spline.design/orb-H9xGZOGs8hG94szuQJkR4v7K/"
-            title="Visionary 3D scene"
-            className="h-full w-full"
+          <spline-viewer
+            url="https://prod.spline.design/6Wq1Q7YGyM-iab9i/scene.splinecode"
+            class="h-full w-full"
           />
         </div>
       </motion.div>
