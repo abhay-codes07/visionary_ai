@@ -6,7 +6,8 @@ from app.services.vision_service import VisionService
 
 
 def get_vision_service() -> VisionService:
-    return VisionService()
+    settings = get_settings()
+    return VisionService(openai_client=get_openai_vision_client(), settings=settings)
 
 
 @lru_cache
