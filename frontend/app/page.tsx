@@ -5,6 +5,7 @@ import { FAQSection } from "@/components/home/faq";
 import { HeroSection } from "@/components/home/hero";
 import { HowItWorksSection } from "@/components/home/how-it-works";
 import { LiveAgentFeedSection } from "@/components/home/live-agent-feed";
+import { LiveVisionLabSection } from "@/components/home/live-vision-lab";
 import { MissionSection } from "@/components/home/mission";
 import { PricingSection } from "@/components/home/pricing";
 import { TestimonialsSection } from "@/components/home/testimonials";
@@ -18,6 +19,7 @@ export default function HomePage() {
       <HeroSection />
       <FeaturedSection />
       <AgentStudioSection />
+      <LiveVisionLabSection />
       <LiveAgentFeedSection />
       <FeaturesGridSection />
       <HowItWorksSection />
