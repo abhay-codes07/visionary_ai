@@ -14,6 +14,11 @@ class Settings(BaseSettings):
     openai_max_retries: int = 2
     openai_retry_backoff_seconds: float = 0.75
     openai_fallback_to_stub: bool = True
+    yolo_model: str = "yolov8n.pt"
+    yolo_confidence_threshold: float = 0.35
+    visionagents_enabled: bool = False
+    live_frame_max_fps: int = 8
+    live_frame_queue_size: int = 4
     websocket_path: str = "/ws"
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
