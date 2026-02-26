@@ -7,13 +7,14 @@ from uuid import uuid4
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from pydantic import ValidationError
 
+from app.api.deps import get_live_stream_service, get_stream_service
 from app.schemas.live import LiveFramePayload, LiveStreamEvent
 from app.services.live_stream_service import LiveStreamService
 from app.services.stream_service import StreamService
 
 router = APIRouter()
-live_service = LiveStreamService()
-stream_service = StreamService()
+live_service = get_live_stream_service()
+stream_service = get_stream_service()
 
 
 @router.websocket("/ws/live")
