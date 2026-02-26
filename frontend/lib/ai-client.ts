@@ -31,6 +31,28 @@ export type SystemStatus = {
   fallback_mode: boolean;
 };
 
+export type LiveBoundingBox = {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+};
+
+export type LiveDetection = {
+  label: string;
+  confidence: number;
+  box: LiveBoundingBox;
+};
+
+export type LiveStreamEvent = {
+  type: "detection" | "reasoning" | "token" | "session" | "error";
+  session_id: string;
+  frame_id?: string;
+  content: string;
+  detections?: LiveDetection[];
+  timestamp: string;
+};
+
 const API_BASE = (process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000").replace(/\/+$/, "");
 const API_V1 = API_BASE.endsWith("/api/v1") ? API_BASE : `${API_BASE}/api/v1`;
 
@@ -165,4 +187,10 @@ export async function streamQuestionVision(
 export function createVisionWebSocket(): WebSocket {
   const wsUrl = (process.env.NEXT_PUBLIC_WS_URL ?? "ws://localhost:8000/api/v1/ws").replace(/\/+$/, "");
   return new WebSocket(wsUrl);
+}
+
+export function createLiveVisionWebSocket(): WebSocket {
+  const base = (process.env.NEXT_PUBLIC_WS_URL ?? "ws://localhost:8000/api/v1/ws").replace(/\/+$/, "");
+  const liveUrl = base.endsWith("/ws/live") ? base : base.replace(/\/ws$/, "/ws/live");
+  return new WebSocket(liveUrl);
 }
