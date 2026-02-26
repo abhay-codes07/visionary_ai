@@ -28,4 +28,5 @@ Production-grade real-time Vision AI Agent platform.
 - Deployment runbook: `docs/DEPLOYMENT_RUNBOOK.md`
 - Release checklist: `docs/RELEASE_CHECKLIST.md`
 - Phase 5 summary: `docs/PHASE5_COMPLETION.md`
+- Phase 6 realtime upgrade: `docs/PHASE6.md`
 
