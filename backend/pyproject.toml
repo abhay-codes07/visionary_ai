@@ -13,8 +13,7 @@ dependencies = [
   "openai==1.57.0",
   "numpy==2.2.1",
   "opencv-python-headless==4.10.0.84",
-  "ultralytics==8.3.58",
-  "vision-agents==0.3.5"
+  "ultralytics==8.3.58"
 ]
 
 [project.optional-dependencies]
@@ -22,6 +21,9 @@ dev = [
   "pytest==8.3.4",
   "httpx==0.28.1",
   "ruff==0.8.4"
+]
+visionagents = [
+  "vision-agents==0.3.5"
 ]
 
 [build-system]

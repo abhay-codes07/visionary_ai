@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { LiveDetection, LiveStreamEvent } from "@/lib/ai-client";
 
 type AgentStreamPanelProps = {

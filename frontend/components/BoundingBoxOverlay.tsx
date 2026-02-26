@@ -1,5 +1,7 @@
 "use client";
 
+import React from "react";
+
 import { LiveDetection } from "@/lib/ai-client";
 
 type BoundingBoxOverlayProps = {

@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { FormEvent, useMemo, useRef, useState } from "react";
 
 import { createVisionWebSocket, MediaType } from "@/lib/ai-client";
