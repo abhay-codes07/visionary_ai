@@ -46,4 +46,10 @@ class VisionAgentService:
     @staticmethod
     def _fallback_reason(prompt: str, detections: list[LiveDetection], demo_mode: str) -> str:
         labels = ", ".join(sorted({d.label for d in detections})) or "no strong detections"
-        return f"[{demo_mode}] Prompt '{prompt}' interpreted with live detections: {labels}."
+        if demo_mode == "security":
+            return f"[security] Monitoring update: detected {labels}. Prompt '{prompt}'. Escalate if unknown motion persists."
+        if demo_mode == "workspace":
+            return f"[workspace] Productivity context: observed {labels}. Prompt '{prompt}'. User appears engaged with workstation."
+        if demo_mode == "objects":
+            return f"[objects] Inventory stream: {labels}. Prompt '{prompt}'. Tracking object presence in frame."
+        return f"[custom] Prompt '{prompt}' interpreted with live detections: {labels}."
