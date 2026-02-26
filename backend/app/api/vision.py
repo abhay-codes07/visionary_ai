@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
@@ -55,5 +55,6 @@ async def answer_live_question(
     return LiveQuestionResponse(
         session_id=payload.session_id,
         answer=answer,
-        generated_at=datetime.now(UTC),
+        generated_at=datetime.now(timezone.utc),
     )
+

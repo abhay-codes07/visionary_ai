@@ -1,4 +1,4 @@
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from uuid import uuid4
 
@@ -27,5 +27,6 @@ class StorageService:
             content_type=file.content_type or "application/octet-stream",
             size_bytes=len(content),
             storage_uri=str(destination.as_posix()),
-            uploaded_at=datetime.now(UTC),
+            uploaded_at=datetime.now(timezone.utc),
         )
+

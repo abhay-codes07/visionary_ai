@@ -1,4 +1,4 @@
-from datetime import datetime, UTC
+from datetime import datetime, timezone
 from uuid import uuid4
 
 from app.core.config import Settings, get_settings
@@ -30,7 +30,7 @@ class VisionService:
             media_type=payload.media_type,
             summary=summary,
             detections=detections,
-            generated_at=datetime.now(UTC),
+            generated_at=datetime.now(timezone.utc),
         )
 
     async def answer_question(self, payload: VisionQuestionRequest) -> VisionQuestionResponse:
@@ -41,7 +41,7 @@ class VisionService:
         return VisionQuestionResponse(
             request_id=payload.request_id,
             answer=answer,
-            generated_at=datetime.now(UTC),
+            generated_at=datetime.now(timezone.utc),
         )
 
     @staticmethod
@@ -114,3 +114,4 @@ class VisionService:
         )
         index = abs(hash(prompt.lower())) % len(profiles)
         return profiles[index]
+

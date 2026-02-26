@@ -1,5 +1,5 @@
 import asyncio
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from uuid import uuid4
 
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
@@ -23,7 +23,7 @@ async def realtime_gateway(websocket: WebSocket) -> None:
     await manager.connect(websocket)
     await manager.send_message(
         websocket,
-        RealtimeOutboundMessage(type="connected", content="Realtime session established.", timestamp=datetime.now(UTC)),
+        RealtimeOutboundMessage(type="connected", content="Realtime session established.", timestamp=datetime.now(timezone.utc)),
     )
     try:
         while True:
@@ -45,7 +45,7 @@ async def _dispatch_inbound(websocket: WebSocket, message: RealtimeInboundMessag
     if message.type == "ping":
         await manager.send_message(
             websocket,
-            RealtimeOutboundMessage(type="token", content="pong", request_id=message.request_id, timestamp=datetime.now(UTC)),
+            RealtimeOutboundMessage(type="token", content="pong", request_id=message.request_id, timestamp=datetime.now(timezone.utc)),
         )
         return
 
@@ -62,7 +62,7 @@ async def _dispatch_inbound(websocket: WebSocket, message: RealtimeInboundMessag
                 type="analysis",
                 request_id=analyze_response.request_id,
                 content=analyze_response.summary,
-                timestamp=datetime.now(UTC),
+                timestamp=datetime.now(timezone.utc),
             ),
         )
         token_events = await streaming_service.stream_analysis(analyze_response.request_id, analyze_response.summary)
@@ -75,7 +75,7 @@ async def _dispatch_inbound(websocket: WebSocket, message: RealtimeInboundMessag
                 type="completed",
                 request_id=analyze_response.request_id,
                 content="Analysis complete.",
-                timestamp=datetime.now(UTC),
+                timestamp=datetime.now(timezone.utc),
             ),
         )
         return
@@ -95,7 +95,7 @@ async def _dispatch_inbound(websocket: WebSocket, message: RealtimeInboundMessag
             type="completed",
             request_id=question_response.request_id,
             content="Question processing complete.",
-            timestamp=datetime.now(UTC),
+            timestamp=datetime.now(timezone.utc),
         ),
     )
 
@@ -107,6 +107,7 @@ async def _send_error(websocket: WebSocket, message: str, request_id: str | None
             type="error",
             request_id=request_id,
             content=message,
-            timestamp=datetime.now(UTC),
+            timestamp=datetime.now(timezone.utc),
         ),
     )
+

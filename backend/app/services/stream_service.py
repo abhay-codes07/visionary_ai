@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 
 from app.schemas.live import LiveStreamEvent
 
@@ -15,7 +15,7 @@ class StreamService:
                     session_id=session_id,
                     frame_id=frame_id,
                     content="",
-                    timestamp=datetime.now(UTC),
+                    timestamp=datetime.now(timezone.utc),
                 )
             ]
 
@@ -26,7 +26,8 @@ class StreamService:
                 session_id=session_id,
                 frame_id=frame_id,
                 content=chunk,
-                timestamp=datetime.now(UTC),
+                timestamp=datetime.now(timezone.utc),
             )
             for chunk in chunks
         ]
+

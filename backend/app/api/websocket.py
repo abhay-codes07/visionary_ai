@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import asyncio
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from uuid import uuid4
 
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
@@ -25,7 +25,7 @@ async def live_vision_gateway(websocket: WebSocket) -> None:
             type="session",
             session_id="bootstrap",
             content="Live vision gateway connected.",
-            timestamp=datetime.now(UTC),
+            timestamp=datetime.now(timezone.utc),
         ).model_dump(mode="json")
     )
     try:
@@ -58,7 +58,7 @@ async def _handle_frame(websocket: WebSocket, incoming: dict) -> None:
             frame_id=analysis.frame_id,
             content=f"{len(analysis.detections)} objects detected.",
             detections=analysis.detections,
-            timestamp=datetime.now(UTC),
+            timestamp=datetime.now(timezone.utc),
         ).model_dump(mode="json")
     )
     await websocket.send_json(
@@ -68,7 +68,7 @@ async def _handle_frame(websocket: WebSocket, incoming: dict) -> None:
             frame_id=analysis.frame_id,
             content=analysis.summary,
             detections=analysis.detections,
-            timestamp=datetime.now(UTC),
+            timestamp=datetime.now(timezone.utc),
         ).model_dump(mode="json")
     )
 
@@ -94,6 +94,7 @@ async def _send_error(websocket: WebSocket, message: str, session_id: str) -> No
             type="error",
             session_id=session_id,
             content=message,
-            timestamp=datetime.now(UTC),
+            timestamp=datetime.now(timezone.utc),
         ).model_dump(mode="json")
     )
+

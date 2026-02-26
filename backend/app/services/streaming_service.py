@@ -1,4 +1,4 @@
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 
 from app.schemas.realtime import RealtimeOutboundMessage
 
@@ -11,7 +11,7 @@ class StreamingService:
                 type="token",
                 request_id=request_id,
                 content=part,
-                timestamp=datetime.now(UTC),
+                timestamp=datetime.now(timezone.utc),
             )
             for part in parts
         ]
@@ -23,7 +23,7 @@ class StreamingService:
                 type="token",
                 request_id=request_id,
                 content=part,
-                timestamp=datetime.now(UTC),
+                timestamp=datetime.now(timezone.utc),
             )
             for part in parts
         ]
@@ -36,3 +36,4 @@ class StreamingService:
         size = max(1, words_per_chunk)
         slices = [" ".join(words[idx : idx + size]) for idx in range(0, len(words), size)]
         return slices[:28]
+
