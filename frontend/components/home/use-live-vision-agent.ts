@@ -93,8 +93,8 @@ export function useLiveVisionAgent(sessionId: string, demoMode: string) {
     if (event.type === "summary" && event.data) {
       const d = event.data as Record<string, unknown>;
       setSummary((d.text as string) ?? event.content);
-      setBrainState((d.state as BrainState) ?? brainState);
-      setStateConfidence((d.confidence as number) ?? stateConfidence);
+      setBrainState((prev) => (d.state as BrainState) ?? prev);
+      setStateConfidence((prev) => (d.confidence as number) ?? prev);
       setBehaviorLabel((d.state as string) ?? "");
     }
   }, []);

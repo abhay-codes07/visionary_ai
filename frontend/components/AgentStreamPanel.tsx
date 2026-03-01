@@ -60,7 +60,6 @@ function formatDuration(seconds: number): string {
 export function AgentStreamPanel({
   detections,
   reasoning,
-  tokens,
   events,
   brainState = "INITIALIZING",
   stateConfidence = 0,
