@@ -1,12 +1,12 @@
 <div align="center">
 
-# 🔮 VisionForge AI
+# 🔮 Visionary AI
 
 **Visionary Agent Protocol**
 
 Real-time Vision AI infrastructure that watches live video, detects objects, reasons over context, and streams cognitive intelligence instantly.
 
-[![CI](https://img.shields.io/github/actions/workflow/status/abhay-codes07/visionforge-ai/ci.yml?branch=main&label=CI&style=for-the-badge)](https://github.com/abhay-codes07/visionforge-ai/actions)
+[![CI](https://img.shields.io/github/actions/workflow/status/abhay-codes07/visionary_ai/ci.yml?branch=main&label=CI&style=for-the-badge)](https://github.com/abhay-codes07/visionary_ai/actions)
 [![Next.js](https://img.shields.io/badge/Next.js-14-black?style=for-the-badge&logo=nextdotjs)](https://nextjs.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.128-009688?style=for-the-badge&logo=fastapi)](https://fastapi.tiangolo.com/)
 [![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
@@ -20,11 +20,11 @@ Real-time Vision AI infrastructure that watches live video, detects objects, rea
 
 ---
 
-## 🧠 What is VisionForge AI?
+## 🧠 What is Visionary AI?
 
-VisionForge AI is a **real-time multimodal cognitive vision agent platform**. It ingests webcam/video/image inputs, runs live object detection via YOLOv8, maintains temporal memory of observed scenes, infers high-level behaviors, tracks brain states with debounce logic, and generates streaming reasoning — all over WebSocket in real time.
+Visionary AI is a **real-time multimodal cognitive vision agent platform**. It ingests webcam/video/image inputs, runs live object detection via YOLOv8, maintains temporal memory of observed scenes, infers high-level behaviors, tracks brain states with debounce logic, and generates streaming reasoning — all over WebSocket in real time.
 
-Unlike simple detection tools, VisionForge AI has a **cognitive pipeline** that understands behavior *over time*:
+Unlike simple detection tools, Visionary AI has a **cognitive pipeline** that understands behavior *over time*:
 
 ```
 Camera Frame → YOLO Detection → Temporal Memory → Behavior Engine
@@ -88,7 +88,7 @@ Camera Frame → YOLO Detection → Temporal Memory → Behavior Engine
 ### Monorepo Structure
 
 ```
-visionforge-ai/
+visionary-ai/
 ├── frontend/                    # Next.js 14 App Router
 │   ├── app/                     # Pages: home, about, blog, contact
 │   ├── components/              # UI components + live vision modules
@@ -243,8 +243,8 @@ flowchart TB
 ### 1. Clone
 
 ```bash
-git clone https://github.com/abhay-codes07/visionforge-ai.git
-cd visionforge-ai
+git clone https://github.com/abhay-codes07/visionary_ai.git
+cd visionary_ai
 ```
 
 ### 2. Environment Files
@@ -426,4 +426,4 @@ MIT — see [LICENSE](LICENSE) for details.
 
 **Abhay Singh** · [@abhay-codes07](https://github.com/abhay-codes07)
 
-Repository: [github.com/abhay-codes07/visionforge-ai](https://github.com/abhay-codes07/visionforge-ai)
+Repository: [github.com/abhay-codes07/visionary_ai](https://github.com/abhay-codes07/visionary_ai)
