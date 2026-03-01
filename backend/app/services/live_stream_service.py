@@ -1,12 +1,20 @@
 from __future__ import annotations
 
 import asyncio
+import logging
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
 
 from app.core.config import get_settings
 from app.schemas.live import LiveDetection, LiveFrameAnalysis, LiveFramePayload
 from app.services.vision_agent_service import VisionAgentService
 from app.services.yolo_service import YoloService
+
+logger = logging.getLogger(__name__)
+
+# Dedicated thread-pool for CPU-heavy YOLO inference so we never block the
+# asyncio event-loop (which would stall all WebSocket I/O).
+_yolo_executor = ThreadPoolExecutor(max_workers=2, thread_name_prefix="yolo")
 
 
 class LiveSessionState:
@@ -31,10 +39,15 @@ class LiveStreamService:
         if payload.session_id not in self._workers:
             self._workers[payload.session_id] = asyncio.create_task(self._worker(payload.session_id))
 
+        # Drop the oldest queued frame when the queue is full so the pipeline
+        # always works on the freshest data.
         if queue.full():
             try:
-                queue.get_nowait()
+                _old_payload, old_future = queue.get_nowait()
                 queue.task_done()
+                if not old_future.done():
+                    old_future.cancel()
+                logger.debug("[live] dropped stale frame for session=%s", payload.session_id)
             except asyncio.QueueEmpty:
                 pass
 
@@ -45,6 +58,7 @@ class LiveStreamService:
 
     async def _worker(self, session_id: str) -> None:
         queue = self._queues[session_id]
+        logger.info("[live] worker started for session=%s", session_id)
         while True:
             payload, future = await queue.get()
             try:
@@ -52,13 +66,27 @@ class LiveStreamService:
                 if not future.cancelled():
                     future.set_result(result)
             except Exception as exc:  # pragma: no cover
+                logger.exception("[live] worker error session=%s: %s", session_id, exc)
                 if not future.cancelled():
                     future.set_exception(exc)
             finally:
                 queue.task_done()
 
     async def _analyze_now(self, payload: LiveFramePayload) -> LiveFrameAnalysis:
-        detections = self._yolo.detect_from_base64(payload.image_base64)
+        # Run the synchronous, CPU-heavy YOLO inference in a thread-pool so
+        # the event-loop stays responsive for WebSocket reads/writes.
+        loop = asyncio.get_running_loop()
+        detections = await loop.run_in_executor(
+            _yolo_executor,
+            self._yolo.detect_from_base64,
+            payload.image_base64,
+        )
+        logger.info(
+            "[live] frame=%s detections=%d labels=%s",
+            payload.frame_id,
+            len(detections),
+            [d.label for d in detections],
+        )
         reasoning = await self._agent.reason(
             prompt=payload.question or "Describe current scene state.",
             detections=detections,

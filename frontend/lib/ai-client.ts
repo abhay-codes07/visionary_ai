@@ -45,12 +45,13 @@ export type LiveDetection = {
 };
 
 export type LiveStreamEvent = {
-  type: "detection" | "reasoning" | "token" | "session" | "error";
+  type: "detection" | "reasoning" | "token" | "session" | "error" | "state_change" | "alert" | "summary";
   session_id: string;
   frame_id?: string;
   content: string;
   detections?: LiveDetection[];
   timestamp: string;
+  data?: Record<string, unknown>;
 };
 
 const API_BASE = (process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000").replace(/\/+$/, "");

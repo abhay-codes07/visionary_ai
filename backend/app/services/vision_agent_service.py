@@ -1,7 +1,11 @@
 from __future__ import annotations
 
+import logging
+
 from app.core.config import Settings, get_settings
 from app.schemas.live import LiveDetection
+
+logger = logging.getLogger(__name__)
 
 
 class VisionAgentService:
@@ -14,8 +18,10 @@ class VisionAgentService:
             try:
                 return await self._agent_reason(prompt=prompt, detections=detections, demo_mode=demo_mode)
             except Exception:
-                pass
-        return self._fallback_reason(prompt=prompt, detections=detections, demo_mode=demo_mode)
+                logger.debug("[agent] vision-agent reason failed, falling back to stub")
+        result = self._fallback_reason(prompt=prompt, detections=detections, demo_mode=demo_mode)
+        logger.debug("[agent] fallback reasoning: %s", result[:80])
+        return result
 
     async def answer_question(self, question: str, detections: list[LiveDetection], demo_mode: str = "custom") -> str:
         if self._agent is not None:

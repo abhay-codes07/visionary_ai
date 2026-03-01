@@ -23,7 +23,8 @@ export function LiveVisionLabSection() {
     <Section id="live-lab">
       <div className="mb-8 text-center">
         <p className="text-xs uppercase tracking-[0.32em] text-white/55">Live Vision Lab</p>
-        <h2 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">Real-Time Vision Agent</h2>
+        <h2 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">Real-Time Cognitive Vision Agent</h2>
+        <p className="mt-2 text-sm text-white/50">A camera with a brain that understands and reacts in real time</p>
       </div>
 
       <div className="grid gap-5 lg:grid-cols-2">
@@ -99,7 +100,22 @@ export function LiveVisionLabSection() {
             {agent.error && <p className="mt-2 text-sm text-rose-200">{agent.error}</p>}
           </form>
         </div>
-        <AgentStreamPanel detections={agent.detections} reasoning={agent.reasoning} tokens={agent.tokens} events={agent.events} />
+
+        <AgentStreamPanel
+          detections={agent.detections}
+          reasoning={agent.reasoning}
+          tokens={agent.tokens}
+          events={agent.events}
+          brainState={agent.brainState}
+          stateConfidence={agent.stateConfidence}
+          stateReason={agent.stateReason}
+          stateSince={agent.stateSince}
+          transitions={agent.transitions}
+          alerts={agent.alerts}
+          summary={agent.summary}
+          behaviorLabel={agent.behaviorLabel}
+          demoMode={demoMode}
+        />
       </div>
     </Section>
   );

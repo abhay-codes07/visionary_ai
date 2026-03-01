@@ -1,10 +1,13 @@
 from datetime import datetime
-from typing import Literal
+from typing import Any, Dict, List, Literal, Optional
 
 from pydantic import BaseModel, Field
 
 DetectionLabel = str
-EventType = Literal["detection", "reasoning", "token", "session", "error"]
+EventType = Literal[
+    "detection", "reasoning", "token", "session", "error",
+    "state_change", "alert", "summary",
+]
 
 
 class BoundingBox(BaseModel):
@@ -44,3 +47,5 @@ class LiveStreamEvent(BaseModel):
     content: str
     detections: list[LiveDetection] = []
     timestamp: datetime
+    # Cognitive pipeline extensions (optional)
+    data: Optional[Dict[str, Any]] = None

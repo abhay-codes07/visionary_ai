@@ -2,6 +2,7 @@ from functools import lru_cache
 
 from app.core.config import get_settings
 from app.integrations.openai_vision_client import OpenAIVisionClient
+from app.services.cognitive_pipeline import CognitivePipeline
 from app.services.live_stream_service import LiveStreamService
 from app.services.stream_service import StreamService
 from app.services.vision_service import VisionService
@@ -28,3 +29,8 @@ def get_live_stream_service() -> LiveStreamService:
 @lru_cache
 def get_stream_service() -> StreamService:
     return StreamService()
+
+
+@lru_cache
+def get_cognitive_pipeline() -> CognitivePipeline:
+    return CognitivePipeline()
